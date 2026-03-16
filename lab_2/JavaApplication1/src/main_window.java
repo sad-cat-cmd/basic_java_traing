@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class main_window extends javax.swing.JFrame {
+    private ControlerTableData this_ControlerTableData;
     private double last_min_x;
     private double last_max_x;
     private double last_step;
@@ -22,6 +23,7 @@ public class main_window extends javax.swing.JFrame {
      */
     public main_window() {
         initComponents();
+        init_obj_ControlerTableData();
     }
 
     /**
@@ -45,6 +47,8 @@ public class main_window extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -87,7 +91,7 @@ public class main_window extends javax.swing.JFrame {
 
         jTextField3.addActionListener(this::jTextField3ActionPerformed);
 
-        jButton1.setText("ЗАПОЛНИТЬ");
+        jButton1.setText("ДОБАВИТЬ");
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jButton2.setText("УДАЛИТЬ");
@@ -95,6 +99,12 @@ public class main_window extends javax.swing.JFrame {
 
         jButton3.setText("ВЫЧИСЛИТЬ");
         jButton3.addActionListener(this::jButton3ActionPerformed);
+
+        jButton4.setText("ЗАПОЛНИТЬ");
+        jButton4.addActionListener(this::jButton4ActionPerformed);
+
+        jButton5.setText("ОЧИСТИТЬ");
+        jButton5.addActionListener(this::jButton5ActionPerformed);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -113,6 +123,10 @@ public class main_window extends javax.swing.JFrame {
                     .addComponent(jTextField2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(57, 57, 57)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton3)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -123,9 +137,11 @@ public class main_window extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton4))
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1))
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(3, 3, 3)
@@ -135,7 +151,9 @@ public class main_window extends javax.swing.JFrame {
                         .addGap(9, 9, 9))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton5))))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -179,7 +197,6 @@ public class main_window extends javax.swing.JFrame {
                 "N", "MAX X", "MIN Y", "ШАГ", "РЕЗУЛЬТАТ"
             }
         ));
-        jTable1.setMinimumSize(new java.awt.Dimension(75, 400));
         jTable1.setPreferredSize(new java.awt.Dimension(320, 447));
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
@@ -238,15 +255,17 @@ public class main_window extends javax.swing.JFrame {
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField3ActionPerformed
+    //инициализация поля класса this_ControlerTableData, выступающего интерфейсом над данными таблицы
+    private void init_obj_ControlerTableData() {
+        DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
+        this_ControlerTableData = new ControlerTableData(model_table);
+    }
     // обработка клика на кнопку: вычислить
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
-        MathFunction object_class = new MathFunction(last_min_x, last_max_x, last_step);
-        double value_result = object_class.get_result();
-        model_table.setValueAt(value_result, count_input_data-1, 4);
+        this_ControlerTableData.show_last_integral();
         return;
     }//GEN-LAST:event_jButton3ActionPerformed
-    // обработка клика на кнопку: заполнить
+    // обработка клика на кнопку: добавить
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
         if (model_table.getRowCount() > 0 && model_table.getValueAt(0, 0) == null) {
@@ -262,14 +281,10 @@ public class main_window extends javax.swing.JFrame {
         double double_max_x = Double.parseDouble(string_max_x);
         double double_min_x = Double.parseDouble(string_min_x);
         double double_step = Double.parseDouble(string_step);
-        count_input_data++;
-        model_table.addRow(new Object[]{count_input_data, double_max_x, double_min_x, double_step, null});
-        model_table.fireTableDataChanged();
+        this_ControlerTableData.push_back_input_data(double_max_x, double_min_x, double_step);
         jTable1.repaint();
         jTable1.revalidate();
-        last_min_x = double_min_x;
-        last_max_x = double_max_x;
-        last_step = double_step;
+        count_input_data++;
         return;
         //jTextField1.setText("");
         //jTextField2.setText("");
@@ -279,7 +294,7 @@ public class main_window extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
         if (count_input_data > 0) {
-            model_table.removeRow(count_input_data - 1);
+            this_ControlerTableData.remove_last();
             count_input_data -= 1;
         }
         else {
@@ -287,6 +302,15 @@ public class main_window extends javax.swing.JFrame {
         }
         return;
     }//GEN-LAST:event_jButton2ActionPerformed
+    //  обработка клика на кнопку: заполнить
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        this_ControlerTableData.clear_table_data();
+        this_ControlerTableData.show_all_data_rows();
+    }//GEN-LAST:event_jButton4ActionPerformed
+    // обрабокта клика на кнопку: очистить
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        this_ControlerTableData.clear_table_data();
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -312,11 +336,12 @@ public class main_window extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new main_window().setVisible(true));
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
