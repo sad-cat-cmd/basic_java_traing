@@ -269,7 +269,7 @@ public class main_window extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
         if (model_table.getRowCount() > 0 && model_table.getValueAt(0, 0) == null) {
-            model_table.setRowCount(0);  // очищаем все пустые строки
+            model_table.setRowCount(0);
         }
         String string_max_x = jTextField1.getText();
         String string_min_x = jTextField2.getText();
@@ -281,7 +281,12 @@ public class main_window extends javax.swing.JFrame {
         double double_max_x = Double.parseDouble(string_max_x);
         double double_min_x = Double.parseDouble(string_min_x);
         double double_step = Double.parseDouble(string_step);
-        this_ControlerTableData.push_back_input_data(double_max_x, double_min_x, double_step);
+        try {
+            this_ControlerTableData.push_back_input_data(double_max_x, double_min_x, double_step);
+        }
+        catch (InputValueException exc) {
+            JOptionPane.showConfirmDialog(this, exc.get_exc_message() + Double.toString(exc.get_ex_value()));
+        }
         jTable1.repaint();
         jTable1.revalidate();
         count_input_data++;
