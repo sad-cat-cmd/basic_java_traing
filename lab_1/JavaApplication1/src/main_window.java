@@ -240,10 +240,20 @@ public class main_window extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField3ActionPerformed
     // обработка клика на кнопку: вычислить
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int rowIndex = jTable1.getSelectedRow();
+        if (rowIndex == -1) {
+            JOptionPane.showMessageDialog(this, "Не выбрана строка таблицы!");
+            return;
+        }
         DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
-        MathFunction object_class = new MathFunction(last_min_x, last_max_x, last_step);
+        double this_max_x = (double) model_table.getValueAt(rowIndex, 1);
+        double this_min_x = (double )model_table.getValueAt(rowIndex, 2);
+        double this_step = (double ) model_table.getValueAt(rowIndex, 3);
+        //MathFunction object_class = new MathFunction(last_min_x, last_max_x, last_step);
+        MathFunction object_class = new MathFunction(this_min_x, this_max_x, this_step);
         double value_result = object_class.get_result();
-        model_table.setValueAt(value_result, count_input_data-1, 4);
+        // model_table.setValueAt(value_result, count_input_data, 4);
+        model_table.setValueAt(value_result, rowIndex, 4);
         return;
     }//GEN-LAST:event_jButton3ActionPerformed
     // обработка клика на кнопку: заполнить
@@ -277,14 +287,20 @@ public class main_window extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
     // обработка клика на кнопку: удалить
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int rowIndex = jTable1.getSelectedRow();
+        if (rowIndex == -1) {
+            JOptionPane.showMessageDialog(this, "Не выбрана строка таблицы!");
+            return;
+        }
         DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
-        if (count_input_data > 0) {
-            model_table.removeRow(count_input_data - 1);
-            count_input_data -= 1;
-        }
-        else {
-            JOptionPane.showMessageDialog(this, "Таблица пуста!");
-        }
+        model_table.removeRow(rowIndex);
+//        if (count_input_data > 0) {
+//            model_table.removeRow(count_input_data - 1);
+//            count_input_data -= 1;
+//        }
+//        else {
+//            JOptionPane.showMessageDialog(this, "Таблица пуста!");
+//        }
         return;
     }//GEN-LAST:event_jButton2ActionPerformed
 
