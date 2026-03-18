@@ -25,6 +25,10 @@ public class ControlerTableData {
         }
         return;
     }
+    public void remove_row_at_index(int index_Row) {
+        table_model.removeRow(index_Row);
+        LinkedListRecIntegral.remove(index_Row);
+    }
     public void show_all_data_rows(){
         table_model.setRowCount(0);
         for (int i = 0; i < LinkedListRecIntegral.size(); i++) {
@@ -45,6 +49,10 @@ public class ControlerTableData {
     public void show_last_integral(){
         double local_integral = LinkedListRecIntegral.getLast().get_integral();
         table_model.setValueAt(local_integral, LinkedListRecIntegral.size()-1,4);
+    }
+    public void show_integral_at_index(int indexRow){
+        double local_integral = LinkedListRecIntegral.get(indexRow).get_integral();
+        table_model.setValueAt(local_integral, indexRow, 4);
     }
     public void push_back_input_data(double max_x, double min_x, double step){
         RecIntegral obj_RecIntegral = new RecIntegral(max_x, min_x, step);

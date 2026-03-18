@@ -262,7 +262,13 @@ public class main_window extends javax.swing.JFrame {
     }
     // обработка клика на кнопку: вычислить
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        this_ControlerTableData.show_last_integral();
+        int rowIndex = jTable1.getSelectedRow();
+        if (rowIndex == -1) {
+            JOptionPane.showMessageDialog(this, "строка не выбрана");
+            return;
+        }
+        this_ControlerTableData.show_integral_at_index(rowIndex);
+        //this_ControlerTableData.show_last_integral();
         return;
     }//GEN-LAST:event_jButton3ActionPerformed
     // обработка клика на кнопку: добавить
@@ -292,14 +298,20 @@ public class main_window extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
     // обработка клика на кнопку: удалить
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
-        if (count_input_data > 0) {
-            this_ControlerTableData.remove_last();
-            count_input_data -= 1;
+        int rowIndex = jTable1.getSelectedRow();
+        if (rowIndex == -1) {
+            JOptionPane.showMessageDialog(this, "строка не выбрана");
+            return;
         }
-        else {
-            JOptionPane.showMessageDialog(this, "Таблица пуста!");
-        }
+//        DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
+//        if (count_input_data > 0) {
+//            this_ControlerTableData.remove_last();
+//            count_input_data -= 1;
+//        }
+//        else {
+//            JOptionPane.showMessageDialog(this, "Таблица пуста!");
+//        }
+        this_ControlerTableData.remove_row_at_index(rowIndex);
         return;
     }//GEN-LAST:event_jButton2ActionPerformed
     //  обработка клика на кнопку: заполнить
