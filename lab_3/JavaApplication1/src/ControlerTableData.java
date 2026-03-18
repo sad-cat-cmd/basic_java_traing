@@ -25,6 +25,10 @@ public class ControlerTableData {
         }
         return;
     }
+    public void remove_row_at_index(int index_Row) {
+        table_model.removeRow(index_Row);
+        LinkedListRecIntegral.remove(index_Row);
+    }
     
     public boolean check_invalid_value (double value_double) {
         if (value_double < 0.000001 || value_double > 1000000.0) {
@@ -54,6 +58,10 @@ public class ControlerTableData {
         double local_integral = LinkedListRecIntegral.getLast().get_integral();
         table_model.setValueAt(local_integral, LinkedListRecIntegral.size()-1,4);
     }
+    public void show_integral_at_index(int indexRow){
+        double local_integral = LinkedListRecIntegral.get(indexRow).get_integral();
+        table_model.setValueAt(local_integral, indexRow, 4);
+    }
     public void push_back_input_data(double max_x, double min_x, double step) throws InputValueException{
         if (check_invalid_value(max_x)){
             throw new InputValueException("Uncorectable max_x value:" , max_x);
@@ -63,6 +71,12 @@ public class ControlerTableData {
         }
         if (check_invalid_value(step)){
             throw new InputValueException("Uncorectable step value: ", step);
+        }
+        if (max_x < min_x) {
+            throw new InputValueException("min_x > max_x, min_x: ", min_x);
+        }
+        if (step > max_x - min_x ) {
+            throw new InputValueException("step > dif max_x and min_x, step: ", step);
         }
         RecIntegral obj_RecIntegral = new RecIntegral(max_x, min_x, step);
         LinkedListRecIntegral.add(obj_RecIntegral);
