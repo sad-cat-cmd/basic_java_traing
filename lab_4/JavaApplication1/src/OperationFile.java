@@ -46,7 +46,7 @@ public class OperationFile {
             FileReader this_FileReader = new FileReader(this_file);
             BufferedReader this_BufferedReader = new BufferedReader(this_FileReader);
             line = this_BufferedReader.readLine();
-            if (line == null || line.isEmpty()) {}
+            if (line == null || line.isEmpty()) {throw new OpenSaveFileException("OPERATIONFILE.get_table_data_from_text_file-> ",file_absolute_path, " # Данный файл пуст #");}
             if (!line.equals(header_line_without_space)) {throw new OpenSaveFileException("OPERATIONFILE.get_table_data_from_text_file-> ",file_absolute_path, " # Данный файл не является файлом, сохраненным через это приложение #");}
             LinkedListRecIntegral = new LinkedList <RecIntegral> ();
             while (true) {
