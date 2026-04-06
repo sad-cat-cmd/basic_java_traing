@@ -7,8 +7,13 @@
  *
  * @author admin_
  */
-import java.io.Serializable;
-public class RecIntegral implements Serializable{
+//import java.io.Serializable;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.IOException;
+import java.io.Externalizable;
+        
+public class RecIntegral implements Externalizable {
     private long serialVersionUID = 1L;
     private double max_x = 0.0;
     private double min_x = 0.0;
@@ -16,7 +21,7 @@ public class RecIntegral implements Serializable{
     private double integral = 0.0;
     
     boolean flag_prev_mathing = false;
-    
+    public RecIntegral(){}
     public RecIntegral(double _max_x, double _min_x, double _step) {
         max_x = _max_x;
         min_x = _min_x;
@@ -36,6 +41,18 @@ public class RecIntegral implements Serializable{
             flag_prev_mathing = true;
         }
         return integral;
+    }
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeDouble(max_x);
+        out.writeDouble(min_x);
+        out.writeDouble(step);
+        out.writeDouble(integral);
+    }
+    public void readExternal(ObjectInput in) throws IOException {
+        max_x = in.readDouble();
+        min_x = in.readDouble();
+        step = in.readDouble();
+        integral = in.readDouble();
     }
     public double get_max_x(){return max_x;}
     public double get_min_x(){return min_x;}

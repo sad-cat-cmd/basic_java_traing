@@ -78,7 +78,7 @@ public class OperationFile {
             int version = this_ObjectInputStream.readInt();
             int size = this_ObjectInputStream.readInt();
             for (int i = 0; i < size ; i++) {
-                RecIntegral obj_RecIntegral = (RecIntegral) this_ObjectInputStream.readObject();
+                RecIntegral obj_RecIntegral = (RecIntegral) this_ObjectInputStream.readObject(); // вызов readExternal();
                 LinkedListRecIntegral.add(obj_RecIntegral);
             }
         }
@@ -135,7 +135,8 @@ public class OperationFile {
             obj_ObjectOutputStream.writeInt(1);
             obj_ObjectOutputStream.writeInt(LinkedListRecIntegral.size());
             for (int i = 0; i < LinkedListRecIntegral.size(); i++) {
-                obj_ObjectOutputStream.writeObject(LinkedListRecIntegral.get(i));
+                //obj_ObjectOutputStream.writeObject(LinkedListRecIntegral.get(i));
+                obj_ObjectOutputStream.writeObject(LinkedListRecIntegral.get(i)); // вызов writeExternal
             }
         }
         catch (IOException exc) {
