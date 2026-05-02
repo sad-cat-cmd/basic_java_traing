@@ -11,41 +11,56 @@ import java.io.*;
  * @author admin_
  */
 
-public class OneClientController extends Thread {
+public class OneClientController {
+    public PrintWriter out;
+    public BufferedReader in;
     private double integral;
-    private PrintWriter writer;
-    private BufferedReader reader;
-    private double minX;
-    private double maxX;
-    private double step;
-    private Socket thisSocket;
+    public double minX;
+    public double maxX;
+    public double step;
+    public Socket thisSocket;
+    public int idClient;
     
-    private void getStrResult (String in) {
-        String parse [] = in.split("\\\\");
-        integral = Double.parseDouble(parse[1]);
-    }
-    private String getStrForSend() {
-        return Double.toString(minX ) + "\\" + Double.toString(maxX) + "\\" + Double.toString(step);
-    }
     public void setValueCalculating(double MinX, double MaxX, double Step) {
         minX = MinX;
         maxX = MaxX;
         step = Step;
     }
-    public OneClientController(Socket Sock){
+    public OneClientController(Socket Sock, int numberClient){
         thisSocket = Sock;
-    }
-    @Override
-    public void run() {
+        idClient = numberClient;
         try {
-            writer = new PrintWriter(thisSocket.getOutputStream(), true);
-            reader = new BufferedReader(new InputStreamReader(thisSocket.getInputStream()));
-            writer.print(getStrForSend());
-            getStrResult(reader.readLine());
+            out = new PrintWriter(thisSocket.getOutputStream());
         }
-        catch(IOException exc) {
-            System.out.println("Ошибка при thisSocket.getOutputStream() или new InputStreamReader(thisSocket.getInputStream()) или reader.readLine()");
+        catch (IOException exc) {
+            System.out.println(idClient + " : Ошибка. Не удалось выполнить получение потока для вывода (OutputStream).\n\t" +
+                               "Сокет не подключен или возникла ошибка ввода вывода");
+            //System.out.println("При socketClient.getOutputStream() в одном из клиентских потоков произошла ошибка. Сокет не подключен или возникла ошибка ввода вывода");
+            //throw new ServerException("ClientThread.ClientThread()", "Ошибка при PrintWriter(socketClient.getOutputStream())" );
+        }
+        try {
+            in = new BufferedReader(new InputStreamReader(thisSocket.getInputStream()));
+        }
+        catch (IOException exc) {
+            System.out.println(idClient + " : Ошибка: не удалось выполнить получение потока для ввода (getInputStream).\n\t" +
+                               "Сокет не подключен или возникла ошибка ввода вывода");
+            //throw new ServerException("ClientThread.ClientThread()", "BufferedReader(new InputStreamReader(socketClient.getInputStream()));");
         }
     }
+    public int close() {
+        if (out != null) {
+            out.close();
+        }
+        if (in != null) {
+            try {
+                in.close();
+            }
+            catch (IOException excIO) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
     public double getIntegral() { return integral;}
 }

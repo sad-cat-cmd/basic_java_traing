@@ -22,6 +22,7 @@ public class ControlerTableData {
     private long lastTimeIntervalNs;
     private long lastTimeIntervalMs;
     
+    
     private int checkCorrectnesInterval(double minX, double maxX) {
         double unacceptabilityPeriadValue = Math.PI / 2;
         double periodFunc = Math.PI;
@@ -31,9 +32,6 @@ public class ControlerTableData {
             unacceptabilityPeriadValue += periodFunc;
         }
     }
-//    private int check_correctness_fname_for_save_bin_file(String f_name, String local_absolute_f_path, String added_msg) {
-//        return 0;
-//    }
     public ControlerTableData(DefaultTableModel _table_model) throws ServerException{
         table_model = _table_model;
         LinkedListRecIntegral = new LinkedList <RecIntegral> ();
@@ -81,18 +79,27 @@ public class ControlerTableData {
         table_model.setRowCount(0);
         return;
     }
-    public void show_last_integral(){
-        double local_integral = LinkedListRecIntegral.getLast().get_integral();
-        table_model.setValueAt(local_integral, LinkedListRecIntegral.size()-1,4);
+//    public void show_last_integral(){
+//        double local_integral = 
+//        //double local_integral = LinkedListRecIntegral.getLast().get_integral();
+//        table_model.setValueAt(local_integral, LinkedListRecIntegral.size()-1,4);
+//    }
+    public void show_integral_at_index(int indexRow) throws ServerException{
+        double integral;
+        double max_x = LinkedListRecIntegral.get(indexRow).get_max_x();
+        double min_x = LinkedListRecIntegral.get(indexRow).get_min_x();
+        double step = LinkedListRecIntegral.get(indexRow).get_step();
+        
+        try {
+            integral = networkController.getIntegral(max_x, min_x, step);
+        }
+        catch (ServerException exc) {
+            throw exc;
+        }
+        LinkedListRecIntegral.get(indexRow).setIntegral(integral);
+        table_model.setValueAt(integral, indexRow, 4);
     }
-    public void show_integral_at_index(int indexRow){
-        //TimeController newTimeControler = new TimeController();
-        double local_integral = LinkedListRecIntegral.get(indexRow).get_integral();
-        table_model.setValueAt(local_integral, indexRow, 4);
-        lastTimeIntervalNs = LinkedListRecIntegral.get(indexRow).getTimeCalculating();
-        //lastTimeIntervalNs = newTimeControler.getTimeIntervalNs();
-        //lastTimeIntervalMs = newTimeControler.getTimeIntervalMs();
-    }
+    
     public void push_back_input_data(double max_x, double min_x, double step) throws InputValueException{
         if (check_invalid_value(max_x)){throw new InputValueException("Uncorectable max_x value:" , max_x);}
         if (check_invalid_value(min_x)){throw new InputValueException("Uncorectable min_x value: ", min_x);}
@@ -100,6 +107,7 @@ public class ControlerTableData {
         if (max_x < min_x) {throw new InputValueException("min_x > max_x, min_x: ", min_x);}
         if (step > max_x - min_x ) {throw new InputValueException("step > dif max_x and min_x, step: ", step);}
         if (checkCorrectnesInterval(min_x, max_x) == 1) {throw new InputValueException("interval include uncorecteble value", 0);}
+        
         RecIntegral obj_RecIntegral = new RecIntegral(max_x, min_x, step);
         LinkedListRecIntegral.add(obj_RecIntegral);
         table_model.addRow(new Object []{LinkedListRecIntegral.size(),max_x,min_x,step, null});
@@ -221,11 +229,14 @@ public class ControlerTableData {
             catch (OpenSaveFileException exc) {
                 throw exc;
             }
-            for (int i = 0; i < local_LinkedList.size(); i++ ) {
+            for (int i = 0; i < local_LinkedList.size(); i++) {
                 LinkedListRecIntegral.add(local_LinkedList.get(i));
             }
             clear_table_data();
             show_all_data_rows();
         }
     }
+    public void closeNetwork(){
+        networkController.close();
+    } 
 }

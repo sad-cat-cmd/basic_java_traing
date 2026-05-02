@@ -8,9 +8,9 @@
  * @author admin_
  */
 
-public class TimeController {
+public class TimeInterval {
     private long startTime;
-    public TimeController(){
+    public TimeInterval(){
         startTime = System.nanoTime();
     }
     public long getTimeIntervalNs() {

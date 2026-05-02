@@ -13,9 +13,7 @@ import java.io.ObjectOutput;
 import java.io.IOException;
 import java.io.Externalizable;
         
-public class RecIntegral implements Externalizable {
-    private long timeCalculating;
-    private long serialVersionUID = 1L;
+public class RecIntegral {;
     private double max_x = 0.0;
     private double min_x = 0.0;
     private double step = 0.0;
@@ -39,27 +37,9 @@ public class RecIntegral implements Externalizable {
         if (flag_prev_mathing == false) {
             CalculatingWorker objCalcCalculatingWorker = new CalculatingWorker(min_x, max_x, step);
             integral = objCalcCalculatingWorker.operation();
-            timeCalculating = objCalcCalculatingWorker.getTimeCalculating();
             flag_prev_mathing = true;
-            //MathThread obj_MathFunction = new MathThread(min_x, max_x, step);
-            //integral = obj_MathFunction.get_result();
         }
         return integral;
-    }
-    public long getTimeCalculating () {
-        return timeCalculating;
-    }
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeDouble(max_x);
-        out.writeDouble(min_x);
-        out.writeDouble(step);
-        out.writeDouble(integral);
-    }
-    public void readExternal(ObjectInput in) throws IOException {
-        max_x = in.readDouble();
-        min_x = in.readDouble();
-        step = in.readDouble();
-        integral = in.readDouble();
     }
     public double get_max_x(){return max_x;}
     public double get_min_x(){return min_x;}

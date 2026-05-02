@@ -10,23 +10,53 @@
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.SwingWorker;
+import javax.swing.JFrame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import java.awt.Color;
 
 public class main_window extends javax.swing.JFrame {
-    private ControlerTableData this_ControlerTableData;
-    private double last_min_x;
-    private double last_max_x;
-    private double last_step;
+    private NetworkControlerCl thisNetworkControler;
     private int count_input_data;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(main_window.class.getName());
-
+    private SwingWorker <Void, Void> worker;
     /**
      * Creates new form main_window
      */
+    private void startingLockButton() {
+        jButton2.setEnabled(false);
+    }
+    private void initObjNetrorkAndDataControler() {
+        DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
+        try {
+            thisNetworkControler = new NetworkControlerCl(model_table); 
+        }
+        catch (ClientException exc) {
+            //
+        }
+    }
     public main_window() {
         initComponents();
-        init_obj_ControlerTableData();
+        initObjNetrorkAndDataControler();
+        startingLockButton();
+        
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeApplication();
+                dispose();
+                System.exit(0);
+            }
+        });
     }
-
+    public void closeApplication() {
+        if (worker != null && !worker.isDone()) {
+            worker.cancel(true);
+        }
+        thisNetworkControler.close();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,22 +68,8 @@ public class main_window extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jButton10 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -64,7 +80,16 @@ public class main_window extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 153, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("ФУНКЦИЯ: tg(x)");
+
+        jButton10.setForeground(new java.awt.Color(102, 204, 0));
+        jButton10.setText("Подключиться");
+        jButton10.addActionListener(this::jButton10ActionPerformed);
+
+        jButton2.setForeground(new java.awt.Color(255, 0, 51));
+        jButton2.setText("Отключиться");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -73,139 +98,22 @@ public class main_window extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(0, 6, Short.MAX_VALUE)
-                .addComponent(jLabel1))
-        );
-
-        jPanel2.setBackground(new java.awt.Color(255, 153, 255));
-
-        jLabel2.setText("MAX x:");
-
-        jLabel3.setText("MIN x:");
-
-        jLabel4.setText("ШАГ:");
-
-        jTextField1.addActionListener(this::jTextField1ActionPerformed);
-
-        jTextField2.addActionListener(this::jTextField2ActionPerformed);
-
-        jTextField3.addActionListener(this::jTextField3ActionPerformed);
-
-        jButton1.setText("ДОБАВИТЬ");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
-
-        jButton2.setBackground(new java.awt.Color(255, 51, 51));
-        jButton2.setText("УДАЛИТЬ");
-        jButton2.addActionListener(this::jButton2ActionPerformed);
-
-        jButton3.setBackground(new java.awt.Color(0, 204, 0));
-        jButton3.setText("ВЫЧИСЛИТЬ");
-        jButton3.addActionListener(this::jButton3ActionPerformed);
-
-        jButton4.setText("ЗАПОЛНИТЬ");
-        jButton4.addActionListener(this::jButton4ActionPerformed);
-
-        jButton5.setText("ОЧИСТИТЬ");
-        jButton5.addActionListener(this::jButton5ActionPerformed);
-
-        jButton7.setBackground(new java.awt.Color(0, 255, 255));
-        jButton7.setText("СОХРАНИТЬ(.dat)");
-        jButton7.addActionListener(this::jButton7ActionPerformed);
-
-        jButton8.setBackground(new java.awt.Color(51, 255, 255));
-        jButton8.setText("ЗАГРУЗИТЬ(.txt)");
-        jButton8.addActionListener(this::jButton8ActionPerformed);
-
-        jButton9.setBackground(new java.awt.Color(51, 255, 255));
-        jButton9.setText("ЗАГРУЗИТЬ(.dat)");
-        jButton9.addActionListener(this::jButton9ActionPerformed);
-
-        jButton6.setBackground(new java.awt.Color(102, 255, 255));
-        jButton6.setText("СОХРАНИТЬ(.txt)");
-        jButton6.addActionListener(this::jButton6ActionPerformed);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-                    .addComponent(jTextField2)
-                    .addComponent(jTextField3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton4)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jButton10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
                 .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton4)
-                        .addComponent(jButton1)
-                        .addComponent(jButton5)))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jButton2)
-                                .addComponent(jButton8)
-                                .addComponent(jButton6))
-                            .addComponent(jLabel3))
-                        .addGap(6, 6, 6))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel4)
-                                .addComponent(jButton3))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButton9)
-                                    .addComponent(jButton7))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15))))
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 153, 255));
@@ -249,17 +157,17 @@ public class main_window extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(52, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(61, 61, 61)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 552, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(104, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -267,7 +175,6 @@ public class main_window extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -275,168 +182,48 @@ public class main_window extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    //Обработка клика на кнопку подключиться
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        jButton10.setEnabled(false);
+        int resultConnection = thisNetworkControler.connection();
+        if (resultConnection != 0) {
+            JOptionPane.showConfirmDialog(this, "Не удалось подключиться к серверу");
+            jButton10.setEnabled(true);
+        }
+        else {
+            jButton2.setEnabled(true);
+            worker = new SwingWorker <Void, Void>() {
+                @Override 
+                protected Void doInBackground() throws Exception {
+                    thisNetworkControler.operation();
+                    return null;
+                }
+                protected void done() {}
+            };
+            worker.execute();
+        }
+    }//GEN-LAST:event_jButton10ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
-
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
-    //инициализация поля класса this_ControlerTableData, выступающего интерфейсом над данными таблицы
-    private void init_obj_ControlerTableData() {
-        DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
-        this_ControlerTableData = new ControlerTableData(model_table);
-    }
-    // обработка клика на кнопку: вычислить
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        int rowIndex = jTable1.getSelectedRow();
-        if (rowIndex == -1) {
-            JOptionPane.showMessageDialog(this, "строка не выбрана");
-            return;
-        }
-        SwingWorker <Void, Void> worker = new SwingWorker <Void, Void>() {
-            private long startTime;
-            @Override 
-            protected Void doInBackground() throws Exception {
-                this_ControlerTableData.show_integral_at_index(rowIndex);
-                return null;
-            }
-            protected void done() {
-                //long timeIntervalMs = this_ControlerTableData.getLastTimeIntervalMs();
-                long timeIntervalNs = this_ControlerTableData.getLastTimeIntervalNs();
-                System.out.println("Time : " + timeIntervalNs + " ns ");
-                //JOptionPane.showConfirmDialog(main_window.this, "Время в ns : " + Long.toString(timeIntervalNs));
-            }
-        };
-        
-        worker.execute();
-//        this_ControlerTableData.show_integral_at_index(rowIndex);
-//        long timeIntervalMs = this_ControlerTableData.getLastTimeIntervalMs();
-//        long timeIntervalNs = this_ControlerTableData.getLastTimeIntervalNs();
-//        JOptionPane.showConfirmDialog(this, "Время в ns : " + Long.toString(timeIntervalNs) + "\n Время в ms: "  + Long.toString(timeIntervalMs));
-        return;
-    }//GEN-LAST:event_jButton3ActionPerformed
-    // обработка клика на кнопку: добавить
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        DefaultTableModel model_table = (DefaultTableModel) jTable1.getModel();
-        if (model_table.getRowCount() > 0 && model_table.getValueAt(0, 0) == null) {
-            model_table.setRowCount(0);
-        }
-        String string_max_x = jTextField1.getText();
-        String string_min_x = jTextField2.getText();
-        String string_step = jTextField3.getText();
-        if (string_max_x.isEmpty() || string_min_x.isEmpty() || string_step.isEmpty()) {
-            JOptionPane.showConfirmDialog(this, "Заполните все поля");
-            return;
-        }
-        double double_max_x = Double.parseDouble(string_max_x);
-        double double_min_x = Double.parseDouble(string_min_x);
-        double double_step = Double.parseDouble(string_step);
-        try {
-            this_ControlerTableData.push_back_input_data(double_max_x, double_min_x, double_step);
-        }
-        catch (InputValueException exc) {
-            JOptionPane.showConfirmDialog(this, exc.get_exc_message() + Double.toString(exc.get_ex_value()));
-        }
-        jTable1.repaint();
-        jTable1.revalidate();
-        count_input_data++;
-        return;
-    }//GEN-LAST:event_jButton1ActionPerformed
-    // обработка клика на кнопку: удалить
+   
+    //Обработка клика на кнопку отключиться
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        int rowIndex = jTable1.getSelectedRow();
-        if (rowIndex == -1) {
-            JOptionPane.showMessageDialog(this, "строка не выбрана");
-            return;
+        if (worker != null && !worker.isDone()) {
+            worker.cancel(true);
         }
-        this_ControlerTableData.remove_row_at_index(rowIndex);
-        return;
+        thisNetworkControler.disconnection();
+        jButton2.setEnabled(false);
+        jButton10.setEnabled(true);
     }//GEN-LAST:event_jButton2ActionPerformed
-    //  обработка клика на кнопку: заполнить
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        this_ControlerTableData.clear_table_data();
-        this_ControlerTableData.show_all_data_rows();
-    }//GEN-LAST:event_jButton4ActionPerformed
-    // обрабокта клика на кнопку: очистить
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        this_ControlerTableData.clear_table_data();
-    }//GEN-LAST:event_jButton5ActionPerformed
-    // обработка клика на кнопку: сохранить(.dat) 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-       boolean flag_show_exit_info = true;
-       try {
-            this_ControlerTableData.write_table_data_in_bin_file();
-       }
-       catch (OpenSaveFileException exc) {
-           JOptionPane.showConfirmDialog(this, exc.get_name_function_with_exc() + exc.get_file_path_exc() + exc.get_msg_decision());
-           flag_show_exit_info = false;
-       }
-       if (flag_show_exit_info) {
-           JOptionPane.showConfirmDialog(this, "Данные успешно сохранены");
-       }
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
-    // обработка клика на кнопку загрузить(.txt)
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        boolean flag_show_exit_info = true;
-        try {
-           this_ControlerTableData.download_table_data_from_text_file();
-       }
-       catch (OpenSaveFileException exc) {
-           JOptionPane.showConfirmDialog(this, exc.get_name_function_with_exc() + exc.get_file_path_exc() + exc.get_msg_decision());
-           flag_show_exit_info = false;
-       }
-       if (flag_show_exit_info) {
-           JOptionPane.showConfirmDialog(this, "Данные успешно загружены");
-       }
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton8ActionPerformed
-    // обработка клика на кнопку: сохранить(.txt)
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-       boolean flag_show_exit_info = true;
-       try {
-          this_ControlerTableData.write_table_data_in_text_file();
-       }
-       catch (OpenSaveFileException exc) {
-           flag_show_exit_info = false;
-           JOptionPane.showConfirmDialog(this, exc.get_name_function_with_exc() + exc.get_file_path_exc() + exc.get_msg_decision());
-       }
-       if (flag_show_exit_info) {
-           JOptionPane.showConfirmDialog(this, "Данные успешно сохранены");
-       }
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
-    // обрабокта клика на кнопку: загрузить (.dat)
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-       boolean flag_show_exit_info = true;
-       try {
-           this_ControlerTableData.download_table_data_from_bin_file();
-       }
-       catch (OpenSaveFileException exc) {
-           flag_show_exit_info = false;
-           JOptionPane.showConfirmDialog(this, exc.get_name_function_with_exc() + exc.get_file_path_exc() + exc.get_msg_decision());
-       }
-       if (flag_show_exit_info) {
-           JOptionPane.showConfirmDialog(this, "Данные успешно загружены");
-       }
-    }//GEN-LAST:event_jButton9ActionPerformed
-
+    //инициализация поля класса this_ControlerTableData, выступающего интерфейсом над данными таблицы
     /**
      * @param args the command line arguments
      */
@@ -462,26 +249,12 @@ public class main_window extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new main_window().setVisible(true));
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
 }

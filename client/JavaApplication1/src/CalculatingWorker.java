@@ -12,7 +12,7 @@ import javax.swing.SwingWorker;
  */
 
 public class CalculatingWorker {
-    private TimeController objTimeContoler;
+    private TimeControler objTimeContoler;
     private int countThread = 4;
     private double minX;
     private double maxX;
@@ -27,7 +27,7 @@ public class CalculatingWorker {
     private long timeIntervalCalculating;
     
     public CalculatingWorker(double PminX, double PmaxX, double Pstep) {
-        objTimeContoler = new TimeController();
+        objTimeContoler = new TimeControler();
         minX = PminX;
         maxX = PmaxX;
         step = Pstep;
@@ -38,7 +38,7 @@ public class CalculatingWorker {
         return;
     }
     public double operation() {
-        TimeController _objTimeContoler = new TimeController();
+        TimeControler _objTimeContoler = new TimeControler();
         double difCalculating = (maxX - minX) / countThread;
         double localMinX = minX;
         double localMaxX = minX;
@@ -49,7 +49,7 @@ public class CalculatingWorker {
             localMinX = localMaxX;
         }
         timeIntervalPrevCalculating = _objTimeContoler.getTimeIntervalNs();
-        _objTimeContoler = new TimeController();
+        _objTimeContoler = new TimeControler();
         for (int i = 0; i < countThread; i++) {
             MathThread newThread = new MathThread(arrMinX[i], arrMaxX[i], step);
             listThread[i] = newThread;
@@ -57,7 +57,7 @@ public class CalculatingWorker {
         }
         timeIntervalCreatingThread = _objTimeContoler.getTimeIntervalNs();
         try {
-            _objTimeContoler = new TimeController();
+            _objTimeContoler = new TimeControler();
             for (int i = 0; i < countThread; i++){
                 listThread[i].join();
                 resultArea += listThread[i].get_result();
@@ -65,7 +65,7 @@ public class CalculatingWorker {
             timeIntervalCalculating = _objTimeContoler.getTimeIntervalNs();
         }
         catch(InterruptedException exc) {
-            System.out.println("Error joining thread");
+            System.out.println("Один из потоков был прерван. Перезупустите приложение");
         }
         finally {
             System.out.println("Первичные вычисления: " + timeIntervalPrevCalculating + " Создание нитей: " + timeIntervalCreatingThread + " Вычисления: " + timeIntervalCalculating);

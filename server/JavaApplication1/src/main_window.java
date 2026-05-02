@@ -10,6 +10,9 @@
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.SwingWorker;
+import java.awt.event.WindowAdapter;
+import javax.swing.JFrame;
+import java.awt.event.WindowEvent;
 
 public class main_window extends javax.swing.JFrame {
     private ControlerTableData this_ControlerTableData;
@@ -22,8 +25,21 @@ public class main_window extends javax.swing.JFrame {
     public main_window() {
         initComponents();
         init_obj_ControlerTableData();
+        
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closeApplication();
+                dispose();
+                System.exit(0);
+            }
+        });
     }
-
+    
+    public void closeApplication () {
+        this_ControlerTableData.closeNetwork();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -316,22 +332,43 @@ public class main_window extends javax.swing.JFrame {
             private long startTime;
             @Override 
             protected Void doInBackground() throws Exception {
-                this_ControlerTableData.show_integral_at_index(rowIndex);
-                return null;
+                // добавить блокировку кнопок
+                jButton1.setEnabled(false);
+                jButton2.setEnabled(false);
+                jButton3.setEnabled(false);
+                jButton3.setEnabled(false);
+                jButton4.setEnabled(false);
+                jButton5.setEnabled(false);
+                jButton6.setEnabled(false);
+                jButton7.setEnabled(false);
+                jButton8.setEnabled(false);
+                jButton9.setEnabled(false);
+                try {
+                    this_ControlerTableData.show_integral_at_index(rowIndex);
+                }
+                catch (ServerException excS) {
+                    JOptionPane.showConfirmDialog(main_window.this, excS.getNameProgramUnit() + ", " + excS.getMsgExc());
+                }
+                finally {
+                    jButton1.setEnabled(true);
+                    jButton2.setEnabled(true);
+                    jButton3.setEnabled(true);
+                    jButton3.setEnabled(true);
+                    jButton4.setEnabled(true);
+                    jButton5.setEnabled(true);
+                    jButton6.setEnabled(true);
+                    jButton7.setEnabled(true);
+                    jButton8.setEnabled(true);
+                    jButton9.setEnabled(true);
+                    return null;
+                }
             }
             protected void done() {
-                //long timeIntervalMs = this_ControlerTableData.getLastTimeIntervalMs();
-                long timeIntervalNs = this_ControlerTableData.getLastTimeIntervalNs();
-                System.out.println("Time : " + timeIntervalNs + " ns ");
-                //JOptionPane.showConfirmDialog(main_window.this, "Время в ns : " + Long.toString(timeIntervalNs));
+                //
             }
         };
         
         worker.execute();
-//        this_ControlerTableData.show_integral_at_index(rowIndex);
-//        long timeIntervalMs = this_ControlerTableData.getLastTimeIntervalMs();
-//        long timeIntervalNs = this_ControlerTableData.getLastTimeIntervalNs();
-//        JOptionPane.showConfirmDialog(this, "Время в ns : " + Long.toString(timeIntervalNs) + "\n Время в ms: "  + Long.toString(timeIntervalMs));
         return;
     }//GEN-LAST:event_jButton3ActionPerformed
     // обработка клика на кнопку: добавить
