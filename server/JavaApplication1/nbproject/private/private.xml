@@ -6,6 +6,8 @@
             <file>file:/home/admin_/basic_java_traing/server/JavaApplication1/src/ClientCalculatingThread.java</file>
             <file>file:/home/admin_/basic_java_traing/server/JavaApplication1/src/ClientPingThread.java</file>
             <file>file:/home/admin_/basic_java_traing/server/JavaApplication1/src/ClientStopJoinDataThread.java</file>
+            <file>file:/home/admin_/basic_java_traing/server/JavaApplication1/src/AcceptClientThread.java</file>
+            <file>file:/home/admin_/basic_java_traing/server/JavaApplication1/src/ControlerTableData.java</file>
             <file>file:/home/admin_/basic_java_traing/server/JavaApplication1/src/NetworkControlerServ.java</file>
         </group>
     </open-files>
