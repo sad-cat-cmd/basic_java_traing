@@ -16,7 +16,7 @@ import com.mycompany.weblogger.ExceptionLoggerWork;
 public class NetworkControlerServ implements AutoCloseable{
     private boolean flagServerWork = false;
     private int countClient = 0;
-    private int port = 8080;
+    private int port = 8000;
     private ServerSocket serverSocket;
     private LinkedList <OneClientController> listClients;
     private AcceptClientThread acceptThread;
@@ -263,7 +263,7 @@ public class NetworkControlerServ implements AutoCloseable{
             serverSocket = new ServerSocket(port); 
         }
         catch (IOException exc) {
-            this.sendLog("Ошибка при инициализации сокета сервера (ServerSocket)", "FATAL");
+            this.sendLog("Ошибка при инициализации сокета сервера (ServerSocket): " + exc.getMessage(), "FATAL");
             throw new ServerException("NetworkControler.startServer()", exc.getMessage());
         }
         flagServerWork = true;
@@ -286,6 +286,8 @@ public class NetworkControlerServ implements AutoCloseable{
     
     @Override
     public void close() {
+        logger.close();
+        System.out.println("ВЫЗОВ ФУНЦИИ ЗАКРЫТИЯ ЛОГГЕРА: logger.close()");
         if (flagServerWork == false) {
             this.sendLog("Сервер не закрыт. Так как сервер не запущен", "INFO");
             System.out.println("Сервер еще не запущен.");

@@ -15,7 +15,7 @@ public class NetworkControlerCl implements AutoCloseable{
     private BufferedReader in;
     private InetAddress addr;
     private Socket socket;
-    private int port = 8080;
+    private int port = 8000;
     private double inputMathingValue[];
     private final Object lockObjectNetworkControler = new Object();
     private final Object lockCalculating = new Object();

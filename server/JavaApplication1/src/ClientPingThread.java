@@ -31,12 +31,12 @@ public class ClientPingThread extends Thread{
         out.flush();
         try {
             strResultPing = in.readLine();
-            if (strResultPing.equals("stop")) {
-                info = "Запрос на разрыв соединения";
-                return;
-            }
             if (strResultPing == null) {
                 info = "Соединение разорвано";
+                return;
+            }
+            if (strResultPing.equals("stop")) {
+                info = "Запрос на разрыв соединения";
                 return;
             }
             if (strResultPing.equals("ready")) {
